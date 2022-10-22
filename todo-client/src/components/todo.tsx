@@ -2,17 +2,27 @@ import React, { useEffect, useState } from 'react';
 import useForm from '../hooks/form';
 
 import { v4 as uuid } from 'uuid';
-import List from './list'
+import ListComponent from './list'
 import FormComponent from './formComponent'
 
-const ToDo = () => {
+export interface Difficulty {
+  difficulty: number,
+}
+export interface Item {
+  difficulty?: number,
+  id?: string,
+  complete?: boolean,
+  text?: string,
+  assignee?: string,
+}
 
-  const [defaultValues] = useState({difficulty: 4,});
-  const [list, setList] = useState([]);
-  const [incomplete, setIncomplete] = useState([]);
+const ToDo = () => {
+  const [defaultValues] = useState<Difficulty>({difficulty: 4,});
+  const [list, setList] = useState<Item[]>([]);
+  const [incomplete, setIncomplete] = useState(Number);
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
-  function addItem(item) {
+  function addItem(item: Item) {
     // TODO: validate against duplicate items
     item.id = uuid();
     item.complete = false;
@@ -20,13 +30,13 @@ const ToDo = () => {
     setList([...list, item]);// this is a callback to state lift from form
   }
 
-  function deleteItem(id) {
+  function deleteItem(id: string) {
     // TODO: item delete button(s)
     const items = list.filter( item => item.id !== id );
     setList(items);
   }
 
-  function toggleComplete(id) {
+  function toggleComplete(id: string) {
 
     const items = list.map( item => {
       if ( item.id === id ) {
@@ -43,7 +53,7 @@ const ToDo = () => {
     let incompleteCount = list.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
     document.title = `To Do List: ${incomplete}`; // TODO: find out why this is returning the value -1. Easy solve is incomplete+1 but that doesn't fix anything
-  }, [list]);
+  }, [incomplete, list]);
 
   return (
     <>
@@ -53,7 +63,7 @@ const ToDo = () => {
 
 
       <FormComponent handleSubmit={handleSubmit} handleChange={handleChange} defaultValues={defaultValues} />
-      <List list={list} toggleComplete={toggleComplete}/>
+      <ListComponent list={list} toggleComplete={toggleComplete}/>
     </>
   );
 };

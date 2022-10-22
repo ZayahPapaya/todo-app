@@ -1,7 +1,7 @@
-
+import React from 'react';
 import './App.css';
-import ToDo from './components/todo.js';
-import { SettingsContext, settings } from './components/settings';
+import ToDo from './src/components/todo';
+import { SettingsContext, settings } from './src/components/settings';
 function App() {
   return (
     <>

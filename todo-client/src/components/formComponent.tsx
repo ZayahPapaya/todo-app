@@ -1,3 +1,5 @@
+import React from "react";
+
 const FormComponent = (props) => {
   return (
     <>
@@ -5,12 +7,12 @@ const FormComponent = (props) => {
         <h2>Add To Do Item</h2>
         <label>
           <span>To Do Item</span>
-          <input onChange={props.handleChange} name="text" type="text" placeholder="Item Details" required="required"/>
+          <input onChange={props.handleChange} name="text" type="text" placeholder="Item Details" required={true}/>
         </label>
 
         <label>
           <span>Assigned To</span>
-          <input onChange={props.handleChange} name="assignee" type="text" placeholder="Assignee Name" required="required"/>
+          <input onChange={props.handleChange} name="assignee" type="text" placeholder="Assignee Name" required={true}/>
         </label>
 
         <label>

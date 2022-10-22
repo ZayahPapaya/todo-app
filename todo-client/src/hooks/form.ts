@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 
-const useForm = (callback, defaultValues={}) => {
+const useForm = (callback: any, defaultValues={}) => {
 
   const [values, setValues] = useState({});
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     callback(values);
   };
 
-  const handleChange = (event) => {
+  const handleChange = (event: any) => {
     event.persist(); // persist allows access to synthetic events inside asynch callbacks
 
     let { name, value } = event.target;
