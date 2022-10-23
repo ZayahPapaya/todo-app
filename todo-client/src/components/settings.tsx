@@ -4,4 +4,4 @@ export const settings = {
   viewableItems: 3,
   difficultySort: false,
 }
-export const SettingsContext = React.createContext();
+export const SettingsContext = React.createContext(settings);
