@@ -10,13 +10,12 @@ import { Item } from './todo';
 const ListComponent = (props: any) => {
   const settings = useContext(SettingsContext);
   let page = props.list
-  if(!settings.showCompleted) page.filter((item: Item) => item.complete)
+  if(!settings.showCompleted) page.filter((item: Item) => !item.complete)
   page = page.map((item: Item) => (
     <div key={item.id}>
-      <p>{JSON.stringify(settings)}</p>
-      <p>{item.text}</p>
-      <p><small>Assigned to: {item.assignee}</small></p>
-      <p><small>Difficulty: {item.difficulty}</small></p>
+      <p>{item.issue}</p>
+      <p><small>Description: {item.description}</small></p>
+      <p><small>Difficulty: {item.difficulty?.label}</small></p>
       <div onClick={() => props.toggleComplete(item.id)}>Complete: {item.complete?.toString()}</div>
       <hr />
     </div>
@@ -30,3 +29,4 @@ const ListComponent = (props: any) => {
   )
 }
 export default ListComponent;
+//<p>{JSON.stringify(settings)}</p>
