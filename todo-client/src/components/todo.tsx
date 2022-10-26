@@ -4,6 +4,7 @@ import useForm from '../hooks/form';
 import { v4 as uuid } from 'uuid';
 import ListComponent from './list'
 import FormComponent from './formComponent'
+import Lightswitch from './Lightswitch'
 
 export interface Difficulty {
   difficulty: number,
@@ -61,7 +62,7 @@ const ToDo = () => {
         <h1>To Do List: {incomplete} items pending</h1>
       </header>
 
-
+      <Lightswitch/>
       <FormComponent handleSubmit={handleSubmit} handleChange={handleChange} defaultValues={defaultValues} />
       <ListComponent list={list} toggleComplete={toggleComplete}/>
     </>

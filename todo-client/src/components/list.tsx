@@ -9,20 +9,23 @@ import { Item } from './todo';
 //  (1st in queue)(2nd in queue)      ^                  
 const ListComponent = (props: any) => {
   const settings = useContext(SettingsContext);
+  let page = props.list
+  if(!settings.showCompleted) page.filter((item: Item) => item.complete)
+  page = page.map((item: Item) => (
+    <div key={item.id}>
+      <p>{JSON.stringify(settings)}</p>
+      <p>{item.text}</p>
+      <p><small>Assigned to: {item.assignee}</small></p>
+      <p><small>Difficulty: {item.difficulty}</small></p>
+      <div onClick={() => props.toggleComplete(item.id)}>Complete: {item.complete?.toString()}</div>
+      <hr />
+    </div>
+  ))
   return (
     <>
-        {
-          props.list.map((item: Item) => (
-            <div key={item.id}>
-              <p>{JSON.stringify(settings)}</p>
-              <p>{item.text}</p>
-              <p><small>Assigned to: {item.assignee}</small></p>
-              <p><small>Difficulty: {item.difficulty}</small></p>
-              <div onClick={() => props.toggleComplete(item.id)}>Complete: {item.complete?.toString()}</div>
-              <hr />
-            </div>
-          ))
-        }
+      {
+        page
+      }
     </>
   )
 }

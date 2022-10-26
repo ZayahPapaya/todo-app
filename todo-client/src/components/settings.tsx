@@ -1,6 +1,6 @@
 import React from 'react';
 export const settings = {
-  showCompleted: true,
+  showCompleted: false,
   viewableItems: 3,
   difficultySort: false,
 }
