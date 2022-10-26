@@ -6,31 +6,40 @@ import ListComponent from './list'
 import FormComponent from './formComponent'
 import Lightswitch from './Lightswitch'
 
-export interface Difficulty {
-  difficulty: number,
-}
 export interface Item {
-  difficulty?: number,
+  difficulty?: Marks,
   id?: string,
   complete?: boolean,
-  text?: string,
-  assignee?: string,
+  issue: string,
+  description: string,
+}
+interface Marks {
+  value: number,
+  label: string,
 }
 
 const ToDo = () => {
-  const [defaultValues] = useState<Difficulty>({difficulty: 4,});
+
   const [list, setList] = useState<Item[]>([]);
   const [incomplete, setIncomplete] = useState(Number);
-  const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
-  function addItem(item: Item) {
+  function handleSubmit(item: Item) {
     // TODO: validate against duplicate items
-    item.id = uuid();
-    item.complete = false;
-    console.log(item);
-    setList([...list, item]);// this is a callback to state lift from form
+    console.log('additem', item);
+    const testId = uuid();
+    let found = false;
+    list.forEach((obj) => {
+      console.log(obj.id, testId)
+      if(obj.id === testId) found = true;
+    });
+    if(!found){
+      item.id = testId
+      item.complete = false;
+      setList([...list, item]);
+    } else {
+      console.log('ID collision');
+    }
   }
-
   function deleteItem(id: string) {
     // TODO: item delete button(s)
     const items = list.filter( item => item.id !== id );
@@ -53,7 +62,7 @@ const ToDo = () => {
   useEffect(() => {
     let incompleteCount = list.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
-    document.title = `To Do List: ${incomplete}`; // TODO: find out why this is returning the value -1. Easy solve is incomplete+1 but that doesn't fix anything
+    document.title = `To Do List: ${incomplete}`;
   }, [incomplete, list]);
 
   return (
@@ -63,7 +72,7 @@ const ToDo = () => {
       </header>
 
       <Lightswitch/>
-      <FormComponent handleSubmit={handleSubmit} handleChange={handleChange} defaultValues={defaultValues} />
+      <FormComponent handleSubmit={handleSubmit}/>
       <ListComponent list={list} toggleComplete={toggleComplete}/>
     </>
   );
