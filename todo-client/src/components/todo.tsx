@@ -5,6 +5,10 @@ import { v4 as uuid } from 'uuid';
 import ListComponent from './list'
 import FormComponent from './formComponent'
 import Lightswitch from './Lightswitch'
+import { withAuth0, useAuth0 } from "@auth0/auth0-react";
+import Logout from './logout';
+import Login from './login';
+import Profile from './userAuth'
 
 export interface Item {
   difficulty?: Marks,
@@ -65,12 +69,14 @@ const ToDo = () => {
     document.title = `To Do List: ${incomplete}`;
   }, [incomplete, list]);
 
+  const {isAuthenticated} = useAuth0();
+
   return (
     <>
       <header>
         <h1>To Do List: {incomplete} items pending</h1>
       </header>
-
+      { isAuthenticated ? <><Logout /> <Profile /></>: <Login />}
       <Lightswitch/>
       <FormComponent handleSubmit={handleSubmit}/>
       <ListComponent list={list} toggleComplete={toggleComplete}/>
