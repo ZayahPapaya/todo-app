@@ -26,17 +26,21 @@ const ToDo = () => {
 
   const [list, setList] = useState<Item[]>([]);
   const [incomplete, setIncomplete] = useState(Number);
+  const { isAuthenticated } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
 
-  function handleSubmit(item: Item) {
+  async function handleSubmit(item: Item) {
     // TODO: validate against duplicate items
     console.log('additem', item);
-    const testId = uuid();
+    const serverItem = await serverPut(item);
+    console.log('item', serverItem.body)
+    const testId = serverItem?._id;
     let found = false;
     list.forEach((obj) => {
       console.log(obj.id, testId)
-      if(obj.id === testId) found = true;
+      if (obj.id === testId) found = true;
     });
-    if(!found){
+    if (!found) {
       item.id = testId
       item.complete = false;
       setList([...list, item]);
@@ -44,17 +48,37 @@ const ToDo = () => {
       console.log('ID collision');
     }
   }
-  function deleteItem(id: string) {
+
+  async function serverPut(item: Item) {
+    if (isAuthenticated) {
+      const token = await getAccessTokenSilently();
+      return await fetch(`${process.env.REACT_APP_SERVER}/history`, {
+        headers: { Authorization: `Bearer ${token}` },
+        method: 'put',
+        body: JSON.stringify({ item })
+      });
+    }
+  }
+
+  async function deleteItem(id: string) {
     // TODO: item delete button(s)
-    const items = list.filter( item => item.id !== id );
-    setList(items);
+    if (isAuthenticated) {
+      const token = await getAccessTokenSilently();
+      await fetch(`${process.env.REACT_APP_SERVER}/history`, {
+        headers: { Authorization: `Bearer ${token}` },
+        method: 'put',
+        body: id,
+      });
+      const items = list.filter(item => item.id !== id);
+      setList(items);
+    }
   }
 
   function toggleComplete(id: string) {
 
-    const items = list.map( item => {
-      if ( item.id === id ) {
-        item.complete = ! item.complete;
+    const items = list.map(item => {
+      if (item.id === id) {
+        item.complete = !item.complete;
       }
       return item;
     });
@@ -63,23 +87,37 @@ const ToDo = () => {
 
   }
 
+  async function populateList() {
+    
+  }
+
   useEffect(() => {
+    async function fetchData() {
+      if (isAuthenticated) {
+        const token = await getAccessTokenSilently();
+        const response = await fetch(`${process.env.REACT_APP_SERVER}/history`, {
+          headers: { Authorization: `Bearer ${token}` },
+          method: 'get',
+        });
+        console.log('response', response)
+        setList(response);
+      }
+    }
+    console.log(list)
     let incompleteCount = list.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
     document.title = `To Do List: ${incomplete}`;
   }, [incomplete, list]);
-
-  const {isAuthenticated} = useAuth0();
 
   return (
     <>
       <header>
         <h1>To Do List: {incomplete} items pending</h1>
       </header>
-      { isAuthenticated ? <><Logout /> <Profile /></>: <Login />}
-      <Lightswitch/>
-      <FormComponent handleSubmit={handleSubmit}/>
-      <ListComponent list={list} toggleComplete={toggleComplete}/>
+      {isAuthenticated ? <><Logout /> <Profile /></> : <Login />}
+      <Lightswitch />
+      <FormComponent handleSubmit={handleSubmit} />
+      <ListComponent list={list} toggleComplete={toggleComplete} />
     </>
   );
 };
